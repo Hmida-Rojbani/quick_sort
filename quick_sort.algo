@@ -1,0 +1,67 @@
+// A utility function to swap two elements 
+PROCEDURE swap(VAR xp,VAR yp : INTEGER)
+VAR
+    tmp : INTEGER;
+BEGIN
+    tmp : = xp;
+    xp := yp;
+    yp := tmp;
+END
+/* This function takes last element as pivot, places 
+the pivot element at its correct position in sorted 
+array, and places all smaller (smaller than pivot) 
+to left of pivot and all greater elements to right 
+of pivot */
+
+FUNCTION partition(VAR arr : ARRAY_OF INTEGER, low, high : INTEGER) : INTEGER
+VAR
+    b,i, pivot : INTEGER;
+BEGIN
+    pivot := arr[high]; // pivot
+    b := low -1; // Index of smaller element
+
+    FOR i FROM low TO high-1  DO
+    // If current element is smaller than the pivot
+        IF (arr[i] < pivot) THEN
+            b := b+1;    // increment index of smaller element 
+            swap(arr[b],arr[i]);
+        END_IF
+    END_FOR
+    swap(arr[b+1],arr[high]);
+    RETURN b+1 ;
+END
+
+/* arr[] --> Array to be sorted,  
+    l  --> Starting index,  
+   h  --> Ending index */
+PROCEDURE quick_sort(VAR arr : ARRAY_OF INTEGER, l, h :INTEGER)
+VAR
+    // Create an auxiliary stack 
+    stack : STACK;
+    p : INTEGER;
+BEGIN
+    // push initial values of l and h to stack 
+    stack.push(l);
+    stack.push(h);
+    // Keep popping from stack while is not empty 
+    WHILE (NOT stack.isEmpty()) DO
+        // pop h and l
+        h := stack.pop();
+        l := stack.pop();
+        // Set pivot element at its correct position 
+        // in sorted array 
+        p := partition(arr,l,h);
+        // If there are elements on left side of pivot, 
+        // then push left side to stack
+        IF (p-1 > l) THEN
+            stack.push(l);
+            stack.push(p-1);
+        END_IF
+        // If there are elements on right side of pivot, 
+        // then push right side to stack 
+        IF (p+1 < h) THEN
+            stack.push(p+1);
+            stack.push(h);
+        END_IF
+    END_WHILE
+END
